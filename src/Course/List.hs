@@ -1,3 +1,4 @@
+
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -208,7 +209,8 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap f = flatten . map f
+-- flatMap = (flatten .) . map
+flatMap f= flatten . map f
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
