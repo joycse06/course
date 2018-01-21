@@ -27,7 +27,7 @@ class Applicative f => Monad f where
 
 infixr 1 =<<
 
--- | Witness that all things with (=<<) and (<$>) also have (<*>).
+-- | Witness that all things with (=<<) and (<$>) also have (<**>).
 --
 -- >>> ExactlyOne (+10) <**> ExactlyOne 8
 -- ExactlyOne 18
@@ -63,8 +63,8 @@ infixr 1 =<<
   f (a -> b)
   -> f a
   -> f b
-(<**>) =
-  error "todo: Course.Monad#(<**>)"
+-- (<**>) :: (a -> m b) -> m a -> m b
+f <**> a = (\x -> x <$> a) =<< f
 
 infixl 4 <**>
 
@@ -77,8 +77,7 @@ instance Monad ExactlyOne where
     (a -> ExactlyOne b)
     -> ExactlyOne a
     -> ExactlyOne b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance ExactlyOne"
+  (=<<) f (ExactlyOne a) = f a
 
 -- | Binds a function on a List.
 --
@@ -89,8 +88,7 @@ instance Monad List where
     (a -> List b)
     -> List a
     -> List b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance List"
+  (=<<) = flatMap
 
 -- | Binds a function on an Optional.
 --
@@ -101,8 +99,8 @@ instance Monad Optional where
     (a -> Optional b)
     -> Optional a
     -> Optional b
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance Optional"
+  (=<<) _ Empty = Empty
+  (=<<) f (Full a) = f a
 
 -- | Binds a function on the reader ((->) t).
 --
@@ -113,8 +111,7 @@ instance Monad ((->) t) where
     (a -> ((->) t b))
     -> ((->) t a)
     -> ((->) t b)
-  (=<<) =
-    error "todo: Course.Monad (=<<)#instance ((->) t)"
+  (=<<) g f = \x -> g (f x) x
 
 -- | Flattens a combined structure to a single structure.
 --
@@ -133,8 +130,7 @@ join ::
   Monad f =>
   f (f a)
   -> f a
-join =
-  error "todo: Course.Monad#join"
+join m = id =<< m
 
 -- | Implement a flipped version of @(=<<)@, however, use only
 -- @join@ and @(<$>)@.
@@ -147,9 +143,7 @@ join =
   f a
   -> (a -> f b)
   -> f b
-(>>=) =
-  error "todo: Course.Monad#(>>=)"
-
+(>>=) = flip (=<<)
 infixl 1 >>=
 
 -- | Implement composition within the @Monad@ environment.
@@ -163,8 +157,7 @@ infixl 1 >>=
   -> (a -> f b)
   -> a
   -> f c
-(<=<) =
-  error "todo: Course.Monad#(<=<)"
+(<=<) f g x = g (x) >>= f
 
 infixr 1 <=<
 
