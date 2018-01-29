@@ -143,7 +143,7 @@ join m = id =<< m
   f a
   -> (a -> f b)
   -> f b
-(>>=) = flip (=<<)
+(>>=) fa f = join (f <$> fa)
 infixl 1 >>=
 
 -- | Implement composition within the @Monad@ environment.
