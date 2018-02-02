@@ -80,7 +80,7 @@ bindOptional _ Empty = Empty
   -> Optional a
   -> Optional a
 (<+>) Empty x = x
-(<+>) x _ = x
+(<+>) q@(Full{}) _ = q
 
 applyOptional :: Optional (a -> b) -> Optional a -> Optional b
 applyOptional f a = bindOptional (\f' -> mapOptional f' a) f

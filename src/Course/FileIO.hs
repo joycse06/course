@@ -100,17 +100,19 @@ run filePath = do
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles filePaths = do
-  sequence $ map getFile filePaths
+getFiles = do
+  sequence . (<$>) getFile
 
 -- Given a file name, return (file name and file contents).
 -- Use @readFile@.
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile path = do
-  contents <- readFile path
-  return (path, contents)
+getFile = lift2 (<$>) (,) readFile
+  -- \name -> (\c -> (name, c) readFile name
+  -- \name -> lift2 (<$> ((,)) (readFile name)
+  -- contents <- readFile path
+  -- return (path, contents)
 
 -- Given a list of (file name and file contents), print each.
 -- Use @printFile@.
